@@ -1,68 +1,113 @@
-# CodeIgniter 4 Application Starter
 
-## What is CodeIgniter?
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+# URL Shortening API
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+Welcome to the URL Shortening API project! This API allows users to shorten URLs, manage their shortened URLs, and view analytics for each shortened URL.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Getting Started
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+To get started with the project, follow the instructions below.
 
-## Installation & updates
+### Prerequisites
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+Make sure you have the following software installed on your machine:
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+- PHP
+- Composer
+- CodeIgniter 4
+- ngrok (for accessing the project over the public internet)
 
-## Setup
+### Installation
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+1. Clone the repository to your local machine:
 
-## Important Change with index.php
+```bash
+git clone https://github.com/your-username/url-shortening-api.git
+```
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+2. Navigate to the project directory:
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+```bash
+cd url-shortening-api
+```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+3. Install dependencies:
 
-## Repository Management
+```bash
+composer install
+```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+4. Run the project:
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+```bash
+php spark serve
+```
 
-## Server Requirements
+The project will run on port 8080 by default.
 
-PHP version 7.4 or higher is required, with the following extensions installed:
+### Registration and Login
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+Before accessing the protected routes, users need to register and log in to get a JWT token.
 
-> [!WARNING]
-> The end of life date for PHP 7.4 was November 28, 2022.
-> The end of life date for PHP 8.0 was November 26, 2023.
-> If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> The end of life date for PHP 8.1 will be November 25, 2024.
+1. Register:
+   - Send a POST request to `auth/v1/register` endpoint with the following payload:
+     ```json
+     {
+       "first_name": "YourFirstName",
+       "last_name": "YourLastName",
+       "email": "your@email.com",
+       "password": "YourPassword"
+     }
+     ```
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+2. Login:
+   - Send a POST request to `auth/v1/login` endpoint with the following payload:
+     ```json
+     {
+       "email": "your@email.com",
+       "password": "YourPassword"
+     }
+     ```
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+   - Upon successful login, you will receive a JWT token in the response.
+
+### Accessing Protected Routes
+
+To access protected routes, include the JWT token in the `Authorization` header of your requests.
+
+1. Create Shortened URL:
+   - Send a POST request to `/api/v1/shorten_url` endpoint with the URL you want to shorten.
+
+2. Revoke URL:
+   - Send a PUT request to `/api/v1/revoke_url/{short_code}` endpoint with the short code of the URL you want to revoke.
+
+3. Get All URLs:
+   - Send a GET request to `/api/v1/get_all_urls/{user_id}` endpoint to retrieve all shortened URLs.
+
+4. Get URL Details:
+   - Send a GET request to `/api/v1/get_single_url_details/{url_id}` endpoint to retrieve details of a specific shortened URL.
+
+### Setting Up ngrok
+
+To access the project over the public internet using ngrok, follow these steps:
+
+1. Download ngrok from the official website: [ngrok.com](https://ngrok.com/download).
+
+2. Extract the ngrok executable to a directory of your choice.
+
+3. Start ngrok tunneling by running the following command in your terminal:
+
+```bash
+./ngrok http 8080
+```
+
+4. ngrok will generate a public URL (e.g., `https://5cd1-******-34-80.ngrok-free.app`). Use this URL to access your project from anywhere on the internet.
+
+### NOTE!!!
+Please  note that you have to set up ngrok. Running the project on local will not yield as expected. The reason is because when you generate a short url and run it in the browser, The backend expects to get your IP address and forwards it thereafter to a thirdparty API service to get analytics. This data is logged in the database. The aim is to provide real time tracking of url use.
+
+### Credit:
+I used the Geolocation API for tracking IP addresses [Geolocation API](https://ip-api.com/docs/api:json)
+
+
+
