@@ -142,6 +142,7 @@ class UrlController extends ResourceController
         $request = service('request');
         $urlModel = new UrlModel();
         helper('url');
+        helper('randomStringGen');
 
         if ($request->getMethod() === 'post') {
             $rules = [
@@ -160,7 +161,7 @@ class UrlController extends ResourceController
                 return $this->respond($response,  ResponseInterface::HTTP_BAD_REQUEST);
             } else {
 
-                $short_code = $this->generateRandomString($length = 8);
+                $short_code = generateRandomString($length = 8);
 
                 $data = [
                     'original_url' => trim($this->request->getVar('original_url')),
@@ -287,11 +288,5 @@ class UrlController extends ResourceController
         }
     }
 
-    protected function generateRandomString($length = 8)
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $randomString = substr(str_shuffle($characters), 0, $length);
-
-        return $randomString;
-    }
+   
 }
