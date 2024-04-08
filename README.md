@@ -56,7 +56,8 @@ Before accessing the protected routes, users need to register and log in to get 
        "first_name": "YourFirstName",
        "last_name": "YourLastName",
        "email": "your@email.com",
-       "password": "YourPassword"
+       "password": "YourPassword",
+       "confirm_password" : "12345"
      }
      ```
 
