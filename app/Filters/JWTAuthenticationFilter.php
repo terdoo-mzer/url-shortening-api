@@ -38,7 +38,7 @@ class JWTAuthenticationFilter implements FilterInterface
         try {
             helper('jwt');
             $encodedToken = getJWTFromRequest($authenticationHeader);
-            validateJWTFromRequest($encodedToken);
+            validateJWTFromRequest($encodedToken[1]);
             return $request;
 
         } catch (Exception $e) {
